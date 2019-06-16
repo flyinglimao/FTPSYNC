@@ -6,6 +6,11 @@
 #include "uploader.h"
 
 Uploader::Uploader(string host, unsigned short port, string username, string password, string root) {
+	this->host = host;
+	this->port = port;
+	this->username = username;
+	this->password = password;
+	this->root = root;
 	res = ftp.connect(host, port);
 	if (res.isOk()) {
 		cout << "Connected\n";
@@ -36,11 +41,14 @@ Uploader::Uploader(string host, unsigned short port, string username, string pas
 	res = ftp.changeDirectory(root);
 }
 
+Uploader::Uploader()
+{
+}
+
 Uploader::Uploader(string host, string username, string password, string root)
 	: Uploader::Uploader(host, 21, username, password, root) {};
 
 Uploader::~Uploader() {
-	res = ftp.disconnect();
 }
 
 void Uploader::BadStatus(short code) {
@@ -54,6 +62,7 @@ function<void(void)> Uploader::create(Task* upload) {
 		upload->status = Task::Status::PROGRESS;
 		string filename;
 		string folder;
+		string error = "Unknown Failed in Upload";
 		short tmp;
 
 		// Create Folder if not exist
@@ -61,13 +70,18 @@ function<void(void)> Uploader::create(Task* upload) {
 			if (upload->path[tmp] == '/') break;
 		}
 		filename = upload->path.substr(tmp + 1);
+
 		for (tmp = upload->dist.length() - 1; tmp >= 0; tmp--) {
 			if (upload->dist[tmp] == '/') break;
 		}
 		folder = upload->dist.substr(0, tmp + 1);
+
 		res = ftp.getDirectoryListing(folder);
 		if (!res.isOk()) {
 			res = ftp.createDirectory(folder);
+			if (!res.isOk()) {
+				error = "Create folder failed";
+			}
 		}
 
 		// Start Upload
@@ -78,9 +92,33 @@ function<void(void)> Uploader::create(Task* upload) {
 				upload->status = Task::Status::SUCCESS;
 				return;
 			}
+			else if (upload->res.getStatus() == 553){
+				upload->res = ftp.deleteFile(upload->dist);
+				if (upload->res.isOk()) {
+					upload->res = ftp.renameFile(filename, upload->dist);
+					if (upload->res.isOk()) {
+						upload->status = Task::Status::SUCCESS;
+						return;
+					}
+					else {
+						error = "Rename file failed";
+					}
+				}
+				else {
+					error = "Delete old file failed";
+				}
+			}
+			else {
+				error = "Rename file failed";
+			}
 		}
+		else {
+			error = "Upload file failed";
+		}
+
+
 		upload->status = Task::Status::FAILED;
-		throw 1;
+		throw error;
 	};
 }
 
@@ -89,22 +127,4 @@ Uploader::Task::Task(string path, string dist, char mode, bool append) {
 	this->dist = dist;
 	this->mode = mode;
 	this->append = append;
-}
-
-void uploadExample() {
-	sf::Ftp ftp;
-	cout << "connecting\n";
-	sf::Ftp::Response res = ftp.connect("localhost", 990);
-	cout << res.getStatus() << endl;
-
-	res = ftp.login("test", "test");
-	cout << res.getStatus() << endl;
-
-	sf::Ftp::ListingResponse ls = ftp.getDirectoryListing();
-	vector<string> lsv = ls.getListing();
-	vector<string>::iterator lsv_h = lsv.begin();
-	vector<string>::iterator lsv_e = lsv.end();
-	vector<string>::iterator lsv_it;
-	for (lsv_it = lsv_h; lsv_it != lsv_e; lsv_it++) cout << *lsv_it << endl;
-
 }

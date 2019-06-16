@@ -1,0 +1,6 @@
+WATCH = D:/somewhere/ 
+FTPHOST = localhost 
+FTPACCOUNT = test 
+FTPPASSWORD = test
+FTPPORT = 21 
+FTPROOT = / 

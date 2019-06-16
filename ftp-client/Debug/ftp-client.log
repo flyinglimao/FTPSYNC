@@ -1,4 +1,8 @@
-﻿  uploader.cpp
-c:\users\flyinglimao\source\repos\ftpsync\ftp-client\uploader.cpp(59): warning C4267: '=': 將 'size_t' 轉換為 'short'，資料可能遺失
-c:\users\flyinglimao\source\repos\ftpsync\ftp-client\uploader.cpp(63): warning C4267: '=': 將 'size_t' 轉換為 'short'，資料可能遺失
+﻿  listener.cpp
+  manager.cpp
+  uploader.cpp
+c:\users\flyinglimao\source\repos\ftpsync\ftp-client\uploader.cpp(69): warning C4267: '=': 將 'size_t' 轉換為 'short'，資料可能遺失
+c:\users\flyinglimao\source\repos\ftpsync\ftp-client\uploader.cpp(74): warning C4267: '=': 將 'size_t' 轉換為 'short'，資料可能遺失
+  main.cpp
+  正在產生程式碼...
   ftp-client.vcxproj -> C:\Users\flyinglimao\source\repos\FTPSync\Debug\ftp-client.exe

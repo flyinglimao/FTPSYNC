@@ -38,9 +38,6 @@
     <ClInclude Include="manager.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="logger.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="ipc.h">
       <Filter>標頭檔</Filter>
     </ClInclude>

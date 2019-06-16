@@ -15,16 +15,18 @@ using namespace std;
 class Uploader {
 private:
 	string host;
-	unsigned short port;
+	unsigned short port = 21;
 	string username;
 	string password;
-	unsigned int timeout;
+	string root;
+	unsigned int timeout = 0;
 	sf::Ftp ftp;
 	sf::Ftp::Response res;
 	void BadStatus(short code = 601);
 	bool keepAlive = false;
 public:
 	class Task;
+	Uploader();
 	Uploader(string host, string username, string password, string root="/");
 	Uploader(string host, unsigned short port, string username, string password, string root = "/");
 	~Uploader();
@@ -41,5 +43,3 @@ public:
 	enum Status { WAIT, PROGRESS, FAILED, SUCCESS } status = WAIT;
 	Task(string path, string dist, char mode = 0, bool append = false);
 };
-
-void uploadExample();
